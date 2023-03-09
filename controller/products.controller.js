@@ -53,7 +53,7 @@ const destroyProduct = async (req, res) => {
     try {
         const {id} = req.params;
         const result = await Product.findByIdAndDelete(id);
-        res.status(204).json({deleted: result});
+        res.status(204).json();
     }
     catch(error){
         res.status(500).json({message: error.message});
@@ -69,22 +69,3 @@ module.exports = {
     updateProduct,
     destroyProduct
 };
-
-// app.get('/products', async(req, res) => {
-//     try {
-//         const products = await Product.find({});
-//         res.status(200).json(products); 
-//     }
-//     catch(error){
-//         res.status(500).json({message: error.message});
-//     }
-// })
-
-// app.get('/products/:id', async(req, res) => {
-//     try {
-//         const {id} = req.params;
-//         const product = await Product.findById(id);
-//         res.status(200).json(product); 
-//     }
-    
-// })
