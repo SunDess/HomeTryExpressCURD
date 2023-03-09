@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Product = require('../models/productModels')
-
 const productSchema = mongoose.model('Product');
 
 
@@ -17,12 +16,12 @@ const storeProduct = async (req,res) =>{
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({});
+        const products = await Product.find();
         res.status(200).json(products);
     }
     catch(error){
-        req.status().json({message: error.message})
-    }
+        res.status(500).json({message: error.message})
+    }   
 };
 
 

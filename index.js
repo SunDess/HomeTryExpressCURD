@@ -1,23 +1,13 @@
-
 const express = require('express');
 const app = express();
 
-const mongoose = require('mongoose');
+const connectDb = require('./config/connectToDb');
 
-const Product = require('./models/productModels')
 
 const routes = require("./routes");
-
 const port = 3000;
 
-(async() => {
-    await mongoose.connect( 'mongodb://127.0.0.1:27017/test').then(()=>{
-        console.log('connected to MongoDB')
-    }).catch((error) => {
-        console.log(error);
-    })
-})
-
+connectDb();
 
 app.use(express.json());
 

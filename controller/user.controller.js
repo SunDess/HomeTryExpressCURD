@@ -8,7 +8,7 @@ const storeUser = async (req, res) => {
     const user = await User.create(req.body);
     res.status(200).json(user);
 };
-
+    
 
 const getAllUser = async (req,res) => {
     const users = await User.find({});
