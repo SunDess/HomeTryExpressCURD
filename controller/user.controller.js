@@ -1,52 +1,114 @@
-const mongoose = require('mongoose');
-const User = require('../models/userModel');
-const UserSchema = mongoose.model('User');
+// const mongoose = require("mongoose");
+// const UserModel = mongoose.model("user");
+
+const User = require("../models/userModel");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const storeUser = async (req, res) => {
-    const user = await User.create(req.body);
-    res.status(200).json(user);
+  try {
+    const { name, lastName, age, phone, email, password } = req.body;
+
+    const hashpass = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name,
+      lastName,
+      age,
+      phone,
+      email,    
+      password: hashpass,
+    });
+
+    res
+      .status(201)
+      .json({ "User name": user.name, _id: user.id, email: user.email });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-
-const getAllUser = async (req,res) => {
+const getAllUser = async (req, res) => {
+  try {
     const users = await User.find({});
     res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 const getUserById = async (req, res) => {
+  try {
     const id = req.params.id;
     const user = await User.findById(id);
-    res.status(200).json(user)
-}
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-const updateUser = async(req, res) => {
-    try {
-        const id = req.params.id;
-        const user = await User.findOneAndUpdate({_id: id}, req.body);
-        const updatedUser = await User.findById(id);
-        res.status(200).json(updatedUser);
-    }
-    catch(error){
-        res.status(500).json({message: error.message});
-    }
-
-}
+const updateUser = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findOneAndUpdate({ _id: id }, req.body);
+    const updatedUser = await User.findById(id);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 const destroyUser = async (req, res) => {
-    try {
-        const {id} = req.params;
-        const result = await User.findOneAndDelete(id);
-        res.status(204).json();
+  try {
+    const { id } = req.params;
+    const result = await User.findOneAndDelete(id);
+    res.status(204).json();
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email: email });
+
+    if (!user) {
+      return console.log("User not found");
     }
-    catch(error){
-        res.status(500).json({message: error.message});
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(401).json({
+        message: "Invalid credentials",
+      });
     }
-}
+
+    const token = jwt.sign(
+      {
+        email: user.email,
+        id: user._id,
+      },
+      "process.env.JWT_SECRET,",
+      { expiresIn: "1m" }
+    );
+
+    return res.status(200).json({
+      accessToken: token,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports = {
-    getAllUser,
-    storeUser,
-    getUserById,
-    updateUser,
-    destroyUser
-}
+  getAllUser,
+  storeUser,
+  getUserById,
+  updateUser,
+  destroyUser,
+  login,
+};
