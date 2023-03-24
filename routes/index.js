@@ -20,18 +20,25 @@ const {
 
 const { productValidator } = require("../validator/product.validator");
 const { userValidator } = require("../validator/newUser.validator");
+const { authenticationMiddleware } = require("../middleware/auth.middleware");
+const { loginValidator } = require("../validator/login.validator");
 
-router.post("/products", productValidator, storeProduct);
-router.get("/products", getAllProducts);
-router.get("/products/:id", getProductById);
-router.put("/products/:id", updateProduct);
-router.delete("/products/:id", destroyProduct);
+router.post(
+  "/products",
+  authenticationMiddleware,
+  productValidator,
+  storeProduct
+);
+router.get("/products", authenticationMiddleware, getAllProducts);
+router.get("/products/:id", authenticationMiddleware, getProductById);
+router.put("/products/:id", authenticationMiddleware, updateProduct);
+router.delete("/products/:id", authenticationMiddleware, destroyProduct);
 
-router.post("/users/login", login);
-router.post("/users", userValidator, storeUser);
-router.get("/users", getAllUser);
-router.get("/users/:id", getUserById);
-router.put("/users/:id", updateUser);
-router.delete("/users/:id", destroyUser);
+router.post("/users/login", loginValidator, login);
+router.post("/users", authenticationMiddleware, userValidator, storeUser);
+router.get("/users", authenticationMiddleware, getAllUser);
+router.get("/users/:id", authenticationMiddleware, getUserById);
+router.put("/users/:id", authenticationMiddleware, updateUser);
+router.delete("/users/:id", authenticationMiddleware, destroyUser);
 
 module.exports = router;

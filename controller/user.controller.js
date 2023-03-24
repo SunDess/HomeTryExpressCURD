@@ -83,7 +83,9 @@ const login = async (req, res) => {
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      return console.log("User not found");
+       return res.status(401).json({
+      message: "Invalid credentials",
+    });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
@@ -98,7 +100,7 @@ const login = async (req, res) => {
         email: user.email,
         id: user._id,
       },
-      "process.env.JWT_SECRET,",
+      process.env.JWT_SECRET,
       { expiresIn: "1m" }
     );
 
@@ -107,7 +109,6 @@ const login = async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: error.message });
   }
 };
