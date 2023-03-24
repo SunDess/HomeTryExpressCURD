@@ -1,5 +1,3 @@
-const { lock } = require("../routes");
-
 const errorHandlerMiddleware = (err, req, res, next) => {
   let formattedError = {};
   if (err.isJoi) {

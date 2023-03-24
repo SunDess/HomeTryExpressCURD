@@ -19,6 +19,7 @@ const {
 } = require("../controller/user.controller");
 
 const { productValidator } = require("../validator/product.validator");
+const { userValidator } = require("../validator/newUser.validator");
 
 router.post("/products", productValidator, storeProduct);
 router.get("/products", getAllProducts);
@@ -27,7 +28,7 @@ router.put("/products/:id", updateProduct);
 router.delete("/products/:id", destroyProduct);
 
 router.post("/users/login", login);
-router.post("/users", storeUser);
+router.post("/users", userValidator, storeUser);
 router.get("/users", getAllUser);
 router.get("/users/:id", getUserById);
 router.put("/users/:id", updateUser);
